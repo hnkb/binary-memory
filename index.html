@@ -10,6 +10,7 @@
         body {
             font-family: 'Fira Sans', sans-serif;
             padding: 100px;
+            width: 5510px;
         }
 
         h1 {
@@ -86,24 +87,24 @@
 </head>
 <body>
     <div class="addr view dec"></div>
-    <div class="addr view hex"></div>
+    <!-- <div class="addr view hex"></div> -->
     <div class="bits view"></div>
     <div class="nibbles view dec"></div>
     <div class="nibbles view hex"></div>
     <div class="bytes view dec"></div>
     <div class="bytes view hex"></div>
-    <!-- <div class="words view dec"></div>
+    <div class="words view dec"></div>
     <div class="words view hex"></div>
     <div class="dwords view dec"></div>
     <div class="dwords view hex"></div>
     <div class="qwords view dec"></div>
-    <div class="qwords view hex"></div> -->
+    <div class="qwords view hex"></div>
 
     <script type="text/javascript">
-        const numBits = 8;
+        const numBits = 100;
         // document.querySelectorAll('.view.hex').forEach(v => v.style.display = 'none')
         // document.querySelectorAll('.view.dec').forEach(v => v.style.display = 'none')
-        document.querySelectorAll('.view.addr').forEach(v => v.style.display = 'none')
+        // document.querySelectorAll('.view.addr').forEach(v => v.style.display = 'none')
 
         for (let i=0; i<numBits; i++) {
             let div = document.createElement('div');
