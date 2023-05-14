@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Binary Number</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@100;200;400&display=swap');
+
+        body {
+            font-family: 'Fira Sans', sans-serif;
+            padding: 100px;
+        }
+
+        h1 {
+            font-weight: 400;
+        }
+
+        .bit {
+            height: 0;
+            width: 40px;
+            padding-top: 40px;
+            line-height: 32px;
+            font-size: 14px;
+            text-align: center;
+            display: inline-block;
+            border: 3px solid black;
+            margin-right: -3px;
+            font-weight: 100;
+        }
+            .bit.on {
+                background: black;
+            }
+
+        .nibble {
+            width: 171px;
+            font-weight: 200;
+        }
+        .byte {
+            width: 343px;
+        }
+        .word {
+            width: 687px;
+        }
+        .dword {
+            width: 1375px;
+        }
+        .qword {
+            width: 2751px;
+        }
+
+        .show-size {
+            color: #0094ff;
+            border-left: 1px solid #0094ff;
+            border-right: 1px solid #0094ff;
+            overflow: hidden;
+            text-align: center;
+            display: inline-block;
+            margin: 16px 0;
+            margin-right: -1px;
+            font-size: 18px;
+            line-height: 21px;
+        }
+            .show-size:before,
+            .show-size:after {
+                background-color: #0094ff;
+                content: "";
+                display: inline-block;
+                height: 1px;
+                position: relative;
+                vertical-align: middle;
+                width: 50%;
+            }
+            .show-size:before {
+                right: 0.5em;
+                margin-left: -50%;
+            }
+            .show-size:after {
+                left: 0.5em;
+                margin-right: -50%;
+            }
+        .view {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="addr view dec"></div>
+    <div class="addr view hex"></div>
+    <div class="bits view"></div>
+    <div class="nibbles view dec"></div>
+    <div class="nibbles view hex"></div>
+    <div class="bytes view dec"></div>
+    <div class="bytes view hex"></div>
+    <!-- <div class="words view dec"></div>
+    <div class="words view hex"></div>
+    <div class="dwords view dec"></div>
+    <div class="dwords view hex"></div>
+    <div class="qwords view dec"></div>
+    <div class="qwords view hex"></div> -->
+
+    <script type="text/javascript">
+        const numBits = 8;
+        // document.querySelectorAll('.view.hex').forEach(v => v.style.display = 'none')
+        // document.querySelectorAll('.view.dec').forEach(v => v.style.display = 'none')
+        document.querySelectorAll('.view.addr').forEach(v => v.style.display = 'none')
+
+        for (let i=0; i<numBits; i++) {
+            let div = document.createElement('div');
+            div.classList.add('bit');
+            div.innerHTML = '0';
+            
+            document.querySelector('.bits.view').appendChild(div);
+        }
+
+        const numBytes = Math.floor((numBits+7)/8);
+        for (let i=0; i<numBytes; i++) {
+            let div = document.createElement('div');
+            div.classList.add('byte');
+            div.classList.add('show-size');
+            div.innerHTML = numBytes-i-1;
+            document.querySelector('.addr.view.dec').appendChild(div);
+
+            // let div2 = div.cloneNode();
+            // div2.innerHTML = (numBytes-i-1).toString(16);
+            // document.querySelector('.addr.view.hex').appendChild(div2);
+        }
+
+        document.querySelectorAll('.bit').forEach(bit => {
+            bit.addEventListener('click', e => {
+                e.target.classList.toggle('on');
+                e.target.innerHTML = e.target.classList.contains('on') ? '1':'0';
+                updateBytes();
+            });
+        });
+
+        function addElementsTo(arr, cls, selector) {
+            const view = document.querySelector(selector);
+            if (!view) return;
+            view.innerHTML = '';
+            arr.forEach(b => {
+                const el = document.createElement('div');
+                el.classList.add(cls);
+                el.classList.add('show-size');
+                
+                el.innerHTML = b.toString(view.classList.contains('hex')?16:10).toUpperCase();
+                view.appendChild(el);
+            })
+        }
+
+        function doubleWidth(arr, value, cls) {
+            let bytes = [];
+            for (let i=0; i<arr.length; i++) {
+                if ((i%2) == 0)
+                    bytes = [0, ...bytes];
+
+                bytes[0] += arr[i] * Math.pow(2, (i%2)*value);
+            }
+            addElementsTo(bytes, cls, `.${cls}s.view.dec`);
+            addElementsTo(bytes, cls, `.${cls}s.view.hex`);
+
+            return bytes;
+        }
+
+        function updateBytes() {
+            const bits = Array.from(document.querySelectorAll('.bit')).reverse();
+            let sum = 0;
+
+            let nibbles = [];
+            for (let i=0; i<bits.length; i++) {
+                if ((i%4) == 0)
+                    nibbles = [0, ...nibbles];
+                
+                if (bits[i].innerHTML=='1')
+                    nibbles[0] += Math.pow(2, i%4);
+            }
+            addElementsTo(nibbles, 'nibble', '.nibbles.view.dec');
+            addElementsTo(nibbles, 'nibble', '.nibbles.view.hex');
+
+            const bytes = doubleWidth(nibbles.reverse(), 4, 'byte');
+            const words = doubleWidth(bytes.reverse(), 8, 'word')
+            const dwords = doubleWidth(words.reverse(), 16, 'dword')
+            const qwords = doubleWidth(dwords.reverse(), 32, 'qword')
+        }
+
+        updateBytes();
+    </script>
+</body>
+</html>
