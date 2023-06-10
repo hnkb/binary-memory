@@ -101,10 +101,20 @@
     <div class="qwords view hex"></div>
 
     <script type="text/javascript">
-        const numBits = 100;
-        // document.querySelectorAll('.view.hex').forEach(v => v.style.display = 'none')
-        // document.querySelectorAll('.view.dec').forEach(v => v.style.display = 'none')
-        // document.querySelectorAll('.view.addr').forEach(v => v.style.display = 'none')
+        let numBits = 8;
+
+        const params = new URL(document.location).hash.substring(1).split(',')
+        for (const p of params) {
+            if (p.startsWith('bits='))
+                numBits = parseInt(p.substring(5))
+
+            if (p=="no-hex")
+                document.querySelectorAll('.view.hex').forEach(v => v.style.display = 'none')
+            if (p=="no-dec")
+                document.querySelectorAll('.view.dec').forEach(v => v.style.display = 'none')
+            if (p=="no-addr")
+                document.querySelectorAll('.view.addr').forEach(v => v.style.display = 'none')
+        }
 
         for (let i=0; i<numBits; i++) {
             let div = document.createElement('div');
@@ -144,7 +154,7 @@
                 el.classList.add(cls);
                 el.classList.add('show-size');
                 
-                el.innerHTML = b.toString(view.classList.contains('hex')?16:10).toUpperCase();
+                el.innerHTML = (view.classList.contains('hex')?'0x':'') + b.toString(view.classList.contains('hex')?16:10).toUpperCase();
                 view.appendChild(el);
             })
         }
